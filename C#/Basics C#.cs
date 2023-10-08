@@ -1848,6 +1848,18 @@ Func<int,int,int> myDelegate = Add;
 // 2. .First() = returns the first match in the collection
 // 2.1 .FirstOrDefault = if there are not objects that match, return the default value, null for objects
 // 3. .Select() = returns a collection with transformed elements
+List<int> numbers = new List<int> { 1, 2, 3, 4, 5 };
+
+// Using Select to square each number
+var squaredNumbers = numbers.Select(x => x * x);
+// Select() can create anonimous types:
+            var orderCounts = Database.Customers
+                .Select(cust => new
+                {
+                    cust.CustomerID,
+                    OrderCount = cust.Orders.Count()
+                });
+
 // 4. .OrderBy().ThenBy() = sorts a collection based on criteria
 var alphabeticallyOrdered = people
     .OrderBy(p=>p.FirstName)  // sort by name only
@@ -1855,8 +1867,8 @@ var alphabeticallyOrdered = people
 // 5. .Sum() = sums all the elements
 // 6. .Min()/.Max() = finds the min/max element based on condition
 var youngest = people.Min(p => p.Age);
-// 7. .Count() = finds the count based on condition
-var countOfJohns = poepleCount(p=>p.FirstName == "John");
+// 7. .Count() = finds the count based on condition, returns an int
+var countOfJohns = people(p=>p.FirstName == "John");
 // 8. .Any() = if at least one of the elements meets a certain condition
 // Any() withtout parameters can also check if the list is empty and will return false if it is
 // 9. .All() = checks if all the elements match a criteria and returns a boolean
@@ -1864,6 +1876,22 @@ var countOfJohns = poepleCount(p=>p.FirstName == "John");
 // 11. .Skip(n) skips n number of elements
 // 12. .Take(n) takes n number of elements and makes a new list
 // 13. .TakeWhile takes until a criteria is met and stop and returns 
+// 14. .GroupBy() groups the elements by a trait:
+
+//that needs to be used with something else, or you will need that:
+
+       List<Person> people = new List<Person>
+        {
+            new Person { Name = "Alice", Age = 25 },
+            new Person { Name = "Bob", Age = 30 },
+            new Person { Name = "Charlie", Age = 25 },
+            new Person { Name = "David", Age = 30 }
+        };
+
+        // Group people by their age
+        var ageGroups = people.GroupBy(person => person.Age).ToList();
+
+
 
 /*
 eliminates loops, shortens the code
@@ -1886,6 +1914,34 @@ This is an example of lazy evaluation
 
 
 //---------------------------------------------------------------------------------------------
+//out keyword:
+
+//In C#, the out keyword is used as a method parameter modifier to indicate that a parameter is being passed by reference and that the method is expected to assign a value to that parameter. Essentially, it allows a method to return multiple values through its parameters.
+//
+//Here's how the out keyword is used:
+//
+//When declaring a method with out parameters:
+
+
+public void GetValue(out int result)
+{
+    // The method must assign a value to 'result'
+    result = 42;
+}
+
+//When calling a method with out parameters:
+
+int value;
+GetValue(out value);
+// 'value' now contains the assigned value, which is 42 in this case
+
+//Key points to remember about out parameters:
+//
+//The method that uses out parameters must assign a value to each out parameter before it returns.
+//The caller of the method must provide variables as arguments for out parameters, and these variables must be uninitialized.
+//out parameters are often used when a method needs to return more than one value or when a method needs to return a value along with a specific status indicator.
+
+
 //---------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------
