@@ -1942,7 +1942,105 @@ GetValue(out value);
 //out parameters are often used when a method needs to return more than one value or when a method needs to return a value along with a specific status indicator.
 
 
-//---------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------
+//unit testing
+[TestClass]  // attribute 
+public class Tests
+{
+    private Calculator calculator; // Declare an instance of the Calculator class here;
+    string long
+    
+    [TestInitialize] // attribute 
+    public void Initialize()
+    {
+        // Create a new Calculator object before each test.
+        calculator = new Calculator();
+        string validCustomerName = "Ivan";
+        string invalidCustomerName = "g";    }
+    
+    
+    [TestMethod]
+    public void Deposit_Should_Be_Valid() 
+    {
+        //Arrange
+        Account account = new Account();
+        //Act
+        account.Deposit(125.0m);
+        //Assert
+        Assert.AreEqual(125.0m, account.Balance, "Balance is wrong")
+    }
+    //ор
+    
+    //Act & Assert
+    [TestMethod]
+    public  void ThrowWhen_valueLargerThanMax()
+    {
+        //arrange   
+        string customerName = "Bruce";
+        double balance = 50;
+        BankAccount sut = new BankAccount(costomerName, balance);
+        //act and assert
+        Assert.ThrowException<ArgumentException>(() => sut.CustomerName = new string('a',11));
+    }
+    
+    
+}
+// attributes general
+
+// 1. [TestClass]
+// 2. [TestMethod]
+// 3. [Timeout]
+// 4. [ExpectedException]
+// 5. [Ignore]
+// 6. [ClassInitialize], [ClassCleanup]
+// 7. [TestInitialize], [TestCleanup]
+
+
+// Assertions Examples
+
+Assert.AreEqual(expected_value, actual_value, "message") // compares values
+Assert.AreSame(expected_object, actual_object, "Message") // compares references
+Assert.IsNull(object, "message")
+Assert.IsNotNull(object, "message")
+Assert.IsTrue(condition)
+Assert.IsFalse(condition)
+Assert.IsInstanceOfType(value1, typeof(value2)) // we check if the returned type is the expected  value2
+Assert.ThrowException<ArgumentException>(()=> sut.CustomerName = new string('a',3)) //empty lambda
+// it translates into:
+// check if this exception is thrown when the sut.CustomerName is "aaa"
+
+
+
+// naming convetions
+
+IsAdult_AgeLessThan18_False
+// first the method we are testing
+// second state under test
+// expected result
+IsAdult_False_AgeLessThan18
+//MethodName_
+//expectedBehaviour
+//_SUT
+Should_ThrowException_When_AgeLessThan18
+When_AgeLessThan18_Expect_IsAdultAsFalse
+
+
+//Unit testing best practices
+
+// 1. Should be executed fast
+// 2. Is utomated and readable
+// 3. Is easy to implement
+// 4. Is relevant tomorrow
+// 5. Is consistent in it's results in different platform
+// 6. Has full contriol over the unit under test
+// 7. Is fully isolated
+
+
+ 
+
+
+
+
 //---------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------
