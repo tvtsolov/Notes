@@ -121,7 +121,7 @@ bool - boolean values, like: true or false
 
 */
 
-// == vs .Equals()
+// == vs .Equals()  comparing strings
 
 // == for objects > compares addresses (if both are pointing to the same place)
 // == for strings > compares values
@@ -194,8 +194,12 @@ text = text.Replace("Telerik", "Ninja"); // result: "Ninja Academy"
 
 text = text.Replace("Telerik", null); // removes the part we want, result is " Academy"
 
-//-------------------------------------------------------------------------------------------------
 
+// (not the same as .AreEqual()) > AreEqual is typically associated with unit testing frameworks like NUnit or MSTest.
+// It's not a standard method in the C# language but rather a part of a testing framework's assertion library.
+
+//-------------------------------------------------------------------------------------------------
+//array general
 //array syntax:
 
 int[] a = { -5 }; //  << initiallisation and declaration of the array
@@ -215,7 +219,9 @@ int[] a = { -5 }; //  << initiallisation and declaration of the array
 
     int[] plantHeights = { 3, 4, 6 };
 
-
+//resize an array
+int[] arr = { 1, 2, 3, 4, 5 };
+Array.Resize(ref arr, 7); // Resize the array to a new size -> 7
 
 // If you decide to define an array and then initialize it later (rather in one line like above) you MUST use the new keyword
 
@@ -269,6 +275,7 @@ int number = int.Parse(numberString);
 //-----------------------------------------------------
 
 // Formatting specifier:
+// precision point specifier 
 
 // value:F2 // prints only 2 digits after the decimal point
     
@@ -359,7 +366,13 @@ do
 //  if the condition is met it will continue to do it until it isn't
 
 
-
+//enums property:
+        public Priority Priority
+        {
+            get { return this.Priority; }
+            private set { }
+        }
+    //in case we use a method for increment and decrement the values
     
  
     
@@ -476,9 +489,9 @@ int[,] array2Da = new int[4, 2] { { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } };
         {300, 4}
     };
     
-    for (int row0 = 0; row < matrix.GetLength(0); row++) { //matrix.GetLength(0) the number of rows
-        for (int col = 0; col < matric.GetLegth(1); col++) { //matrix.GetLength(1) the number of columns
-            Console.Write($"{0, 4}", matrix[row, col]);
+    for (int row = 0; row < matrix.GetLength(0); row++) { //matrix.GetLength(0) the number of rows
+        for (int col = 0; col < matrix.GetLength(1); col++) { //matrix.GetLength(1) the number of columns
+            Console.Write("{0, 4}", matrix[row, col]);
         }
         Console.WriteLine();
     }
@@ -490,7 +503,16 @@ int[,] array2Da = new int[4, 2] { { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } };
 
 // here is how to initialize it:
     int[,] nameArray =      
-        
+
+// populate an array from console:
+    for (int i = 0; i < rows; i++)
+    {
+        short[] row = Console.ReadLine().Split(' ').Select(short.Parse).ToArray();
+        for (int j = 0; j < row.Length; j++)
+        {
+            matrix[i, j] = row[j];
+        }
+    }
         
 // jagged arrays
     int[][] arrayName = new int[5][3];
@@ -706,7 +728,7 @@ division can be done before multiplication and must be done before addition, and
     
     public static double Pow(double base, double power)
     
-    double base: It is a double-precision floating-point number which is to be raised to a power and type of this parameter is System.Double.
+    //double base: It is a double-precision floating-point number which is to be raised to a power and type of this parameter is System.Double.
     
 // Examples:
 
@@ -742,8 +764,8 @@ Output : 0
 
 
 //-------------------------------------------------------------------------------------------- 
-    print string in reverse order:
-    (had to be passed into an array first)
+    //print string in reverse order:
+    //(had to be passed into an array first)
 
             string input = Console.ReadLine();
             char[] reverse = input.ToCharArray();
@@ -1583,27 +1605,10 @@ catch (Exception ex)
     throw ex; //this will clear the stack trace and start it over
 }
 
-//just an empty catch with a consolewriteline message will trow the message if any exception os met!!  
+// just an empty catch with a consolewriteline message will trow the message if any exception is met!!  
 
 // using throw ex in the above example will throw the same in the same way but will reset the stack trace
 
-Exception 
- |         \ 
- |          \
- |           \
- |           Aplication exception
-System exception                \
- |    \                          \
- |     \                          MyCustomException
-InvalidoOperationException 
-FormatException
-NullReferenceException
-ArithmeticException
-ArgumentException
-|               \
-|                \
-|              ArgumentNullException
-ArgumentOutOfRangeException
 
 // custom exception class:
 
@@ -1623,7 +1628,6 @@ public class InvalidUserInputException : ApplicationException
 // code reuse (with diff types)
 // System.Collections.Generic
 // used mainly to create collections
-
 
 
 
@@ -1710,6 +1714,10 @@ public static class Extentions
     }
 }
 
+// used like so:
+string str = "235";
+int number = str.ToInt();
+
 // should be used only where the methos would be applicable for any instance of that type, not for a specific ones
 
 //another example:
@@ -1733,7 +1741,17 @@ class Program
     }
     
 }
-    
+
+// create dictionary:
+// create dictionary:array
+
+Dictionary<string, int> myDictionary = new Dictionary<string, int>();
+
+// Tuple:
+
+var myTuple = ("World", 123); // does that even work????
+new Tuple <int, int>(row, col);
+
 // Lambda expressions general
 
 // example 1
@@ -1841,7 +1859,7 @@ Func<int,int,int> myDelegate = Add;
 
 
 
-
+//LINQ methods
 
 // most commonly used operators:
 // 1. .Where() = filters a collection
@@ -1870,6 +1888,7 @@ var youngest = people.Min(p => p.Age);
 // 7. .Count() = finds the count based on condition, returns an int
 var countOfJohns = people(p=>p.FirstName == "John");
 // 8. .Any() = if at least one of the elements meets a certain condition
+    Members.Any(Member => Member.Name == name)) // returns bool
 // Any() withtout parameters can also check if the list is empty and will return false if it is
 // 9. .All() = checks if all the elements match a criteria and returns a boolean
 // 10. .Average() = returns double
@@ -1998,17 +2017,32 @@ public class Tests
 
 // Assertions Examples
 
+
+
 Assert.AreEqual(expected_value, actual_value, "message") // compares values
-Assert.AreSame(expected_object, actual_object, "Message") // compares references
+Assert.AreSame(expected_object, actual_object, "message") // compares references
 Assert.IsNull(object, "message")
 Assert.IsNotNull(object, "message")
 Assert.IsTrue(condition)
 Assert.IsFalse(condition)
 Assert.IsInstanceOfType(value1, typeof(value2)) // we check if the returned type is the expected  value2
-Assert.ThrowException<ArgumentException>(()=> sut.CustomerName = new string('a',3)) //empty lambda
+Assert.ThrowsException<ArgumentException>(()=> sut.CustomerName = new string('a',3)) 
+Assert.ThrowsException<ArgumentException>(() => sut.CustomerName = new string('a', 3), "Optional message here");
+// we can also do that:
+Assert.ThrowsException<InvalidUserInputException>(() => command.Execute()); // no parameters, just call the method of the object we created in the test (command in this case)
+
+
+//empty lambda
 // it translates into:
 // check if this exception is thrown when the sut.CustomerName is "aaa"
 
+[TestMethod]
+[ExpectedException(typeof(ArgumentException))]
+//or with the messgage:
+[ExpectedException(typeof(ArgumentException), "Please provide a non-null or empty value")]
+//if we test the constructor:
+Assert.ThrowsException<ArgumentException>(() => new Boarder.Models.Task(title1, assignee, dueDate));
+//this checks if the exception that wa thrown was the expected type, but we don't write an Assert line
 
 
 // naming convetions
@@ -2036,16 +2070,355 @@ When_AgeLessThan18_Expect_IsAdultAsFalse
 // 7. Is fully isolated
 
 
+
+//---------------------------------------------------------------------------------------------
+//sorting algorithms
+
+
+// Selection sort   O(n2) worst and best case, same number of loops
+
+repeat (n - 1) times
+    set the first unsorted element as the minumim
+    for each of the unsorted elements
+        if element < current minimum
+        set element as new minimum
+        
+// searched for the smallest element and switches it with the current index (first, second, thirds etc.) 
+
+// Bubble sort
+
+    do 
+        swapped = false
+        for i = 1 to indexOfLstUnsortedElement -1
+            if leftElement > rightElement
+                swap(leftElement, rightElement)
+                swapped = true
+    while swapped
+
+// merge sort best, O(log n) worst O(n log n)
+
+// splits into small arrays of 1 element and devide and conquer 
+
+// quick sort O(n2)
+
+// also devide and conquer, uses a pivot point, moves all elements smaller than it to the laft and bigger than it to the right, then does the same again from the start
+
+
+
+//---------------------------------------------------------------------------------------------
+// Trees general
+
+//using CompareTo.
+
+
+
+// CompareTo(Object) // not the same as CompareTo(String)
+
+
+
+
+//  Returns int
+//  Value	Condition
+//  Less than zero	This instance precedes value.
+//  Zero	This instance has the same position in the sort order as value.
+//  Greater than zero	This instance follows value.
+//  -or-
+//  value is null.
+
+string s = "some text";
+Object[] objectsToCompare = { test, test.ToString(), 123,
+                                    123.ToString(), "some text",
+                                    "Some Text" };
+                                    
+foreach (var objectToCompare in objectsToCompare)
+int i = s.CompareTo(objectToCompare);
+
+//DFS in Binary tree
+
+//InOrder
+InOrder(node.Left);
+print(node);
+InOrder(node.right);
+
+//PostOrder
+PostOrder(node.left);
+PostOrder(node.right);
+print node;
+
+//PreOrder
+Print node;
+PreOrder(node.left);
+Preorder(node.rigth);
+
+// Breadth first seach in a tree BFS
+// is implemented with queue always
+GetBFS(root)
+queue.enqueue(root)
+while (queue not empty) 
+{
+    node = queue.dequeue()
+    print node;
+    foreach child in node.children
+        queue.enqueue(child)
+}
+
+// Depth first search DFS
+// implemented with stack always
+GetBFS(root)
+stack.push(root)
+while (stack not empty)
+{
+    node = stack.Pop()
+    print node;
+    foreach child in node.children
+        stack.push(child)
+}
+
+
+
+//---------------------------------------------------------------------------------------------
+// recursion, imagine the problem as the stack used for the method in order of operations
+
+static string RecursionTask1(int n)
+{
+    if (n <= 0)
+    {
+        return "";
+    }
+    else
+    {
+        return n.ToString() + RecursionTask1(n - 1);
+    }
+}
+
+// prints 54321
+// tip - imagine the very last operation and see where it will be placed, at the start or the begining of the string 
+//
+//---------------------------------------------------------------------------------------------
+
+
+
+
+//Web Development
+
+// -- BeersApiController.cs
+controllers deal with how the incoming requests are managed 
+
+    [Route("api/beers")] // the path to the below class > BeersApiController
+    [ApiController]
+
+    //controller is a class that takes and responces ro requests
+
+
+//also 
+ [Route("api/beers")] 
+// can be set to use the first name of the controller
+
+// each controller is on a different path
+// we do not instantiate the controller, the path automatically instantiates it
+
+// And how does that work??
+ [Route("api/beers")] 
+//what will be the path?
+// the path will be the first name of the controller before the word 'Controller' in the name. 
+// For example if the name of the controller is:
+
+DayTimeController, the path will be :
+api/daytime
+
+//if the name of the controller is 
+StringController, the name will be 
+api/string
+
+
+//---------------------------------------------------------------------------------------------
+
+
+
+// @ Dep inversion
+// abstraction should not depend on other details 
+// details should not depend on abstractions
+
+// classes should require their dependencies (in the c-ors)
+// you can't create them without the objects they need
+
+
+// achieved by using:
+// @ IoC
+
+// meaning of IoC > we don't have to instantiate the objects, the frame work does it
+
+// @ Dependancy injection
+
+// differenes between DInv, IoC and DInj
+
+
+// loose coupling 
+// easier to read
+// easy to maintain and extend
+
+
+
+
+// **** TRANSIENT SCOPED SINGLETON **** //
+
+//--------------------------------------------------------
+//          *** TRANSIENT >> most often used ??
+//--------------------------------------------------------
+// new instance is created each request TO USE THE OBJECT
+//
+// useful for
+/*
+    Database Access (new request is new connection)
+    File Access
+    Services that should dispose of their state
+    When you need a fresh instance of an object every single time
+*/
+
+
+//--------------------------------------------------------
+//        *** SCOPED >> often used?
+//--------------------------------------------------------
+// new instance per рequest is created, refresh the page creates a new one
+// all classes will use one instance and close it (when the query is finished?)
+// 
+// useful for:
+/*
+    persisting state throughtout application per request
+*/
+
+
+//--------------------------------------------------------
+//         *** SINGLETON  >> most often used??
+//--------------------------------------------------------
+// lives untill the whole app works
+// 
+// used for caching services
+/*
+    caching services
+    global configuration
+    business rules
+    https clients
+    persistent state that is useful for the runtime of the application
+*/
+
+
+
+
+// Layered Architecture
+
+/*
+
+Presentation layer  >> in our case the controllers
+^
+Business layer >> Service 
+^
+DataAccess layer >> Repository
+
+*/
+
+
+// Dependancy injection
+
+//=====================================================//
+// Basic Authentication
+//=====================================================//
+
+
+// authentication vs authorisation
+
+// authentication is when you login, username and username, two factor authentication
+// checks against username only:
+
+//we pass string authorizationHeader as argument:
+try
+    return this.UserService.GetUsername(authorizationHeader);
+catch
+    exception("Invalis username");
+
+//next will be to check if he is Admin
+
+// authorization follows the authentication
+// authorizationn is your rights 
+//
+//
+//
+
+//C:\Program Files (x86)\Microsoft SDKs\NuGetPackages\
+
+//=====================================================//
+// Entity Framework Core
+//=====================================================//
+//
+// Object-Relational Mapping (ORM)
+// ORM libraries
+//
+//  Code First method:
+//  - creating the app logic first, then create the databases and their logic
+//  - build the code logic arount the database logic
+//
+//  Entity Framework = standard ORM library 
+//  maps tables to objects
+//  Has build in CRUD operations
+//
+//  DbContext class
+//  all the communication between the app and the database goest through this class
+//  it translates all the LINQ queries into SQL queries and to execure them 
+//
+//  DbContext is out DataBase
+//  DbSet are the tables in the DataBase
+//  
+
+
+// First we create the Context class in the Models folder:
+
+    public class BeerContext : DbContext // this needs a NuGetPackage called Microsoft.EntityFrameworkCore.SQLserver
+    {
+        public BeerContext(DbContextOptions<BeerContext> options)
+        : base(options){ }
+
+
+        public DbSet<Beer> Beers { get; set; }
+        public DbSet<Brewery> Breweries { get; set; }
+    }
+
+
+//  next create the database and setting it up in Program.cs:
+
+ public void ConfigureServices(IServiceCollection services)
+ {
+     services.AddDbContext<BeerContext> ( options => { options.
+         UseSqlServer(@"Server=DESKTOP-VKFPR8Q\SQLEXPRESS;Database=BeersDatabase;Integrated Security=True;"); } );
+
+     // connects the DB and our application
+     // UseSqlServer() <- takes a connection string that consists of:
+     // 1. name or address of the sql server (check it in the SQL S management studio)
+     // 2. name of the db
+     // 3. the way of authentication
+     // @"Server=DESKTOP-VKFPR8Q\SQLEXPRESS;Database=BeersDatabase;Integrated Security=True;"
+     // (1, 2, 3)
+     // the last part True means to use the credentilas we use on our Windows PC for authenticating in the SQL server
+     // if False, we need to provide a passwords and username
+ }
  
+ 
+// Code first
+
+//  Data Annotations - ForeignKey Attribute in EF 6 & EF Core
+//  The ForeignKey attribute is used to configure a foreign key in the relationship 
+//  between two entities in EF 6 and EF Core. It overrides the default conventions. 
+//  As per the default convention, EF makes a property as foreign key property when 
+//  its name matches with the primary key property of a related entity.
+
+//  ForeignKey Signature: [ForeignKey(name string)]
+//
+//
+//
+//
+//
 
 
 
-
-//---------------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------
