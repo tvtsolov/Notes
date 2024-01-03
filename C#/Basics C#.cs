@@ -1,4 +1,14 @@
 
+/*
+  "username": "string2",
+  "email": "user2@example.com",
+  "password": "string",
+  "firstName": "string",
+  "lastName": "string"
+
+*/
+
+
 yield return
 
 private set (encapsulation)
@@ -1868,30 +1878,33 @@ Func<int,int,int> myDelegate = Add;
 // 3. .Select() = returns a collection with transformed elements
 List<int> numbers = new List<int> { 1, 2, 3, 4, 5 };
 
-// Using Select to square each number
-var squaredNumbers = numbers.Select(x => x * x);
-// Select() can create anonimous types:
-            var orderCounts = Database.Customers
-                .Select(cust => new
-                {
-                    cust.CustomerID,
-                    OrderCount = cust.Orders.Count()
-                });
+    // Using Select to square each number
+    var squaredNumbers = numbers.Select(x => x * x);
+
+    // Select() can create anonimous types:
+    var orderCounts = Database.Customers
+        .Select(cust => new
+        {
+            cust.CustomerID,
+            OrderCount = cust.Orders.Count()
+        });
 
 // 4. .OrderBy().ThenBy() = sorts a collection based on criteria
 var alphabeticallyOrdered = people
-    .OrderBy(p=>p.FirstName)  // sort by name only
+    .OrderByDescending(p=>p.FirstName)  // sort by name only
     .ThenBy(p=>p.LastName);   // then sort by last name
+    
 // 5. .Sum() = sums all the elements
 // 6. .Min()/.Max() = finds the min/max element based on condition
 var youngest = people.Min(p => p.Age);
 // 7. .Count() = finds the count based on condition, returns an int
 var countOfJohns = people(p=>p.FirstName == "John");
-// 8. .Any() = if at least one of the elements meets a certain condition
+// 8. .Any() = if at least one of the elements meets a certain condition returns true
     Members.Any(Member => Member.Name == name)) // returns bool
 // Any() withtout parameters can also check if the list is empty and will return false if it is
 // 9. .All() = checks if all the elements match a criteria and returns a boolean
 // 10. .Average() = returns double
+double average = objects.Average(obj => obj.Value);
 // 11. .Skip(n) skips n number of elements
 // 12. .Take(n) takes n number of elements and makes a new list
 // 13. .TakeWhile takes until a criteria is met and stop and returns 
@@ -1963,6 +1976,61 @@ GetValue(out value);
 
 //---------------------------------------------------------------------------------------
 //unit testing
+
+// Naming conventions
+
+/*
+Separate Test Project names after the main project
+    Add reference to the project we are testing
+    
+    folders:
+    
+    Separate folder for each layer
+    
+        Separate class for each method:
+        example:
+        "class MethodName_Should"
+            
+            name each test with it's expected behaviour
+            ecample:
+            public void ReturnCorrectObject_When_ParamsAreValid() {}
+*/
+
+
+// Mock objects:
+
+//install MOQ package from the NuPackage Manager
+
+
+var repositoryMock = new Mock<IBeersRepository>();
+
+// setup:
+repositoryMock
+    .Setup(repo => repo.BeerExists(It.IsAny<string>()))
+    .Returns(false);
+    
+repositoryMock
+    .Setup(repo => repo.Create(It.IsAny<Beer>()))
+    .Returns(testBeer);
+    
+// We can do the above to make each method we are testing in the test to return a particular thing
+
+// Setup Sequense:
+
+repositoryMock
+    .SetupSequence(repo => repo.Create(testBeer))
+    .Returns(testBeer)                                                                  // first time
+    .Throws(new DuplicateEntityException("Beer with that name already exists"));        // second time
+
+
+// Package Manager Console commands:
+
+Add-Migration YourMigrationName
+Update-Database
+Update-Database -TargetMigration YourMigrationName
+Add-Migration YourMigrationName | Update-Database
+
+
 [TestClass]  // attribute 
 public class Tests
 {
@@ -1999,7 +2067,7 @@ public class Tests
         double balance = 50;
         BankAccount sut = new BankAccount(costomerName, balance);
         //act and assert
-        Assert.ThrowException<ArgumentException>(() => sut.CustomerName = new string('a',11));
+        Assert.ThrowsException<ArgumentException>(() => sut.CustomerName = new string('a',11));
     }
     
     
@@ -2201,8 +2269,132 @@ static string RecursionTask1(int n)
 
 //Web Development
 
+// REST API
+
+// rest priciples:
+
+1. statelessness
+2. client server architecture
+3. uniform interface
+4. stateless communication
+5. cachebility 
+6. layered system
+
+// diman:
+7. the requests are based on resources
+8. the communication is via JSONS
+9. the requests forms are unified 
+
+
+//using the IQueryable type inside the repository, called by the main GetAall():
+
+private IQueryable<Beer> GetBeers()
+{
+    return context.Beers
+            .Include(beer => beer.Style)
+            .Include(beer => beer.CreatedBy)
+            .Include(beer => beer.Ratings)
+                .ThenInclude(rating => rating.User);
+}
+
+
+
+
+
+// pagination:
+
+GET/posts?page=3&count=20
+// will devide the result set in groups if 20 and return the 3rd group (or page)
+
+GET/users/:id/messages?month=2&year=2018
+//will give us all messages sent by the user in February 2018
+
+
+// Dependency inversion 
+
+
+
+// get userId from controller
+
+string userIdStr = User.FindFirstValue("UserID");
+
+// get user name from controller
+
+string username = User.FindFirstValue(ClaimTypes.Name);
+
+
+/*
+****** TO READ ******
+
+
+Classes should require their dependencies, not instatiate them
+Classes should let you know what they need to do their work
+
+    - depend on abstraction
+    - split the dependency between the different modules by introducing an abstracion between them
+    - allows us to change easily whole classes
+    
+how to achieve that:
+    - contructor injection
+    - property injection
+    - method injection
+
+SOLID principles
+Interface agregation principle
+
+SQL structured query language
+
+Idempotence: PUT requests are idempotent. Repeated identical PUT requests should have the same effect as a single request, making it safer for operations that can be repeated without causing unintended side effects.
+
+Idempotence: Generally, POST requests are not considered idempotent. Making the same POST request multiple times may result in different outcomes, such as creating multiple resources with different identifiers.
+
+
+*/
+
+
+
+/*
+
+ what is entity framework
+ what functionality does it allow
+ помага за достъпа до базата данни
+ който може да се сетъпне менюъли
+
+ what is API (aplication programming interface)
+
+    като интерфейс, без значение от бекенда, служи за да може клиентите да ползват приложението независимо от бекенда
+
+    
+    scopped singleton 
+    
+
+
+
+*/
+
+
+// swagger е като постман 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // -- BeersApiController.cs
 controllers deal with how the incoming requests are managed 
+
+
+
+
+
 
     [Route("api/beers")] // the path to the below class > BeersApiController
     [ApiController]
@@ -2231,17 +2423,60 @@ StringController, the name will be
 api/string
 
 
+
+//Error Handling in REST Controller
+
+ApiController
+Route "api/[controller]""
+
+public class BeersController : ControllerBase
+{
+    [HttpGet("{id}")]
+    public IActionResult Get(int id)
+    {
+        var beer = this.beers.First(beer => beer.Id == Id);
+        
+        if(beer == null)    // <<<<<<<<<this
+            return NotFound();
+        
+        return Ok(beer);
+    }
+}
+
+// Validation in REST Controller
+
+	public class Beer
+	{
+		public int Id { get; set; }
+            
+        [Required]          //  <<< this
+        [StringLength(25)]  //  <<< this
+        public string Name { get; set; }
+		public double Abv { get; set; }
+    }
+    //or
+    public class Beer
+    {
+        public int Id { get; set; }
+
+        [MinLength(2, ErrorMessage = "The {0} must be at least {1} characters long.")]
+        [MaxLength(20, ErrorMessage = "The {0} must be no more than {1} characters long.")]
+        public string Name { get; set; }
+        [Range(0.1, 35, ErrorMessage = "The {0} must be between {1}% and {2}%.")]
+    }
 //---------------------------------------------------------------------------------------------
 
 
 
-// @ Dep inversion
-// abstraction should not depend on other details 
+// @ Dependancy inversion
+// abstraction should not depend on details (interfaces are the abstractions here)
 // details should not depend on abstractions
 
 // classes should require their dependencies (in the c-ors)
 // you can't create them without the objects they need
 
+// low level modules are classes that don't depend on any other class
+// high level modules depend on other classes 
 
 // achieved by using:
 // @ IoC
@@ -2262,6 +2497,7 @@ api/string
 
 // **** TRANSIENT SCOPED SINGLETON **** //
 
+
 //--------------------------------------------------------
 //          *** TRANSIENT >> most often used ??
 //--------------------------------------------------------
@@ -2279,7 +2515,8 @@ api/string
 //--------------------------------------------------------
 //        *** SCOPED >> often used?
 //--------------------------------------------------------
-// new instance per рequest is created, refresh the page creates a new one
+// new instance per рequest is created, 
+// refresh the page creates a new one
 // all classes will use one instance and close it (when the query is finished?)
 // 
 // useful for:
@@ -2302,7 +2539,9 @@ api/string
     persistent state that is useful for the runtime of the application
 */
 
+// HTTP general
 
+// Hypertext Transfer Protocol 
 
 
 // Layered Architecture
@@ -2369,6 +2608,7 @@ catch
 //  DbSet are the tables in the DataBase
 //  
 
+// in Entity Framework the word ENTITY stands for TABLE
 
 // First we create the Context class in the Models folder:
 
@@ -2414,12 +2654,101 @@ catch
 //
 //
 //
+
+
+// Using intermidiate/junction tables with annotation in them:
 //
-//
+public class YourEntity
+{
+    [Key, Column(Order = 0)]
+    public int FirstForeignKey { get; set; }
+
+    [Key, Column(Order = 1)]
+    public int SecondForeignKey { get; set; }
+    
+    // these form the composite primary key, the PK is always ONE, always!
+
+    // Other properties of your entity...
+
+    // Navigation properties, if needed...
+}
 
 
 
 //---------------------------------------------------------------------------------------------
+// configuring relationships using fluent API:
+// happens inside the context class
+
+// setting up many to many:
+protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+    modelBuilder.Entity<Rating>()
+       .HasKey(r => new { r.BeerId, r.UserId });
+
+    modelBuilder.Entity<Rating>()
+        .HasOne(r => r.User)
+        .WithMany(u => u.Ratings)
+        .HasForeignKey(r => r.UserId);
+
+    modelBuilder.Entity<Rating>()
+        .HasOne(r => r.Beer)
+        .WithMany(b => b.Ratings)
+        .HasForeignKey(r => r.BeerId);
+        
+}
+// more on this here:
+// https://learn.microsoft.com/en-us/ef/core/modeling/relationships/many-to-many
+
+/*
+
+
+ //fluentAPI begin
+
+ modelBuilder.Entity<Rating>()
+     .HasKey(r => new { r.ThreadId, r.UserId });
+
+ modelBuilder.Entity<Rating>()
+     .HasOne(r => r.User)
+     .WithMany(u => u.Ratings)
+     .HasForeignKey(r => r.UserId)
+     .OnDelete(DeleteBehavior.NoAction);
+
+ modelBuilder.Entity<Rating>()
+     .HasOne(r => r.Thread)
+     .WithMany(b => b.Ratings)
+     .HasForeignKey(r => r.ThreadId)
+     .OnDelete(DeleteBehavior.NoAction);
+
+
+ modelBuilder.Entity<Comment>()
+    .HasKey(c => c.Id);  // Use 'Id' as the primary key
+
+ modelBuilder.Entity<Comment>()
+     .Property(c => c.Id)
+     .ValueGeneratedOnAdd();  // Let the database generate values for 'Id'
+
+ modelBuilder.Entity<Comment>()
+     .HasOne(c => c.Author)
+     .WithMany(a => a.Comments)
+     .HasForeignKey(c => c.AuthorId)
+     .OnDelete(DeleteBehavior.NoAction);
+
+ modelBuilder.Entity<Comment>()
+     .HasOne(c => c.Thread)
+     .WithMany(t => t.Comments)
+     .HasForeignKey(c => c.ThreadId)
+     .OnDelete(DeleteBehavior.NoAction);
+
+
+// in that example above the comment table can't have a composite key because one user won't be able to comment on more than one thread
+
+
+ //fluetn Api end
+
+
+
+*/
+
 //---------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------
